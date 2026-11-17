@@ -7,6 +7,8 @@ import {
 } from '@tanstack/react-router'
 import { useAuthExpiryRedirect } from '@/features/auth/auth.hooks'
 import { hasValidAuthSession, useAuthStore } from '@/store/authStore'
+import { AdminHeader } from '@/components/organisms/AdminHeader'
+import { AdminSidebar } from '@/components/organisms/AdminSidebar'
 
 export const Route = createFileRoute('/_admin')({
   beforeLoad: () => {
@@ -45,27 +47,15 @@ function AdminLayout(): React.ReactElement {
     }
   }, [logout, navigate])
 
-  const handleLogout = (): void => {
-    logout()
-    void navigate({ to: '/login', replace: true })
-  }
-
   return (
-    <div className="demo-page">
-      <header className="mb-8 flex items-center justify-between gap-4">
-        <div>
-          <p className="island-kicker mb-1">LMS admin</p>
-          <h1 className="demo-section-title">Admin console</h1>
-        </div>
-        <button
-          className="demo-button demo-button-secondary"
-          onClick={handleLogout}
-          type="button"
-        >
-          Sign out
-        </button>
-      </header>
-      <Outlet />
+    <div className="flex h-screen overflow-hidden bg-(--bg-base)">
+      <AdminSidebar />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <AdminHeader title="Admin Console" />
+        <main className="container mx-auto flex-1 overflow-y-auto p-6">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
