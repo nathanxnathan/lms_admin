@@ -34,65 +34,10 @@ const NAV_ITEMS: NavItem[] = [
     icon: <ClipboardList className="size-4" />,
   },
   {
-    label: 'Customers',
-    to: '/customers',
+    label: 'Departments',
+    to: '/department',
     icon: <Users className="size-4" />,
-  },
-  {
-    label: 'Rentals',
-    to: '/rentals',
-    icon: <ClipboardList className="size-4" />,
-  },
-  {
-    label: 'Products',
-    to: '/products',
-    icon: <Package className="size-4" />,
-  },
-  {
-    label: 'Orders',
-    to: '/orders',
-    icon: <ShoppingCart className="size-4" />,
-  },
-  {
-    label: 'Resources',
-    to: '/resources',
-    icon: <Newspaper className="size-4" />,
-  },
-  {
-    label: 'Doctors',
-    to: '/doctors',
-    icon: <Stethoscope className="size-4" />,
-  },
-  {
-    label: 'Appointments',
-    to: '/appointments',
-    icon: <CalendarCheck className="size-4" />,
-  },
-  {
-    label: 'Inventory',
-    to: '/inventory',
-    icon: <Boxes className="size-4" />,
-  },
-  // {
-  //   label: 'Equipment',
-  //   to: '/equipment',
-  //   icon: <PackageSearch className="size-4" />,
-  // },
-  {
-    label: 'Reports',
-    to: '/reports',
-    icon: <BarChart3 className="size-4" />,
-  },
-  {
-    label: 'Settings',
-    to: '/settings',
-    icon: <Settings className="size-4" />,
-  },
-  {
-    label: 'Admins',
-    to: '/admins',
-    icon: <ShieldCheck className="size-4" />,
-  },
+  }
 ] satisfies NavItem[]
 
 type AdminSidebarProps = {
