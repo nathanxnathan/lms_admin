@@ -2,16 +2,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { courseFormSchema } from '@/features/courses/courses.schema'
 import type { CourseFormValues } from '@/features/courses/courses.schema'
+import type { Department } from '@/features/department/department.types'
 import { Button } from '@/components/ui/button'
 
 type CourseFormProps = {
+  departments: Department[]
   initialValues?: CourseFormValues
   onCancel: () => void
-  onSubmit: (values: CourseFormValues) => void
+  onSubmit: (values: CourseFormValues) => void | Promise<void>
   submitLabel: string
 }
 
 export const CourseForm = ({
+  departments,
   initialValues,
   onCancel,
   onSubmit,
@@ -23,7 +26,12 @@ export const CourseForm = ({
     register,
   } = useForm<CourseFormValues>({
     resolver: zodResolver(courseFormSchema),
-    defaultValues: initialValues ?? { courseName: '', courseCode: '' },
+    defaultValues: initialValues ?? {
+      name: '',
+      code: '',
+      description: '',
+      departmentIds: [],
+    },
   })
 
   return (
@@ -35,19 +43,19 @@ export const CourseForm = ({
       <div className="flex flex-col gap-1.5">
         <label
           className="text-sm font-semibold text-(--sea-ink)"
-          htmlFor="courseName"
+          htmlFor="name"
         >
           Course name
         </label>
         <input
-          id="courseName"
+          id="name"
           className="demo-input"
-          aria-invalid={errors.courseName ? 'true' : undefined}
-          {...register('courseName')}
+          aria-invalid={errors.name ? 'true' : undefined}
+          {...register('name')}
         />
-        {errors.courseName && (
+        {errors.name && (
           <p className="text-sm text-destructive" role="alert">
-            {errors.courseName.message}
+            {errors.name.message}
           </p>
         )}
       </div>
@@ -55,22 +63,74 @@ export const CourseForm = ({
       <div className="flex flex-col gap-1.5">
         <label
           className="text-sm font-semibold text-(--sea-ink)"
-          htmlFor="courseCode"
+          htmlFor="code"
         >
           Course code
         </label>
         <input
-          id="courseCode"
+          id="code"
           className="demo-input"
-          aria-invalid={errors.courseCode ? 'true' : undefined}
-          {...register('courseCode')}
+          aria-invalid={errors.code ? 'true' : undefined}
+          {...register('code')}
         />
-        {errors.courseCode && (
+        {errors.code && (
           <p className="text-sm text-destructive" role="alert">
-            {errors.courseCode.message}
+            {errors.code.message}
           </p>
         )}
       </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label
+          className="text-sm font-semibold text-(--sea-ink)"
+          htmlFor="description"
+        >
+          Description
+        </label>
+        <textarea
+          id="description"
+          className="demo-input min-h-24"
+          aria-invalid={errors.description ? 'true' : undefined}
+          {...register('description')}
+        />
+        {errors.description && (
+          <p className="text-sm text-destructive" role="alert">
+            {errors.description.message}
+          </p>
+        )}
+      </div>
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-sm font-semibold text-(--sea-ink)">
+          Departments
+        </legend>
+        {departments.length === 0 ? (
+          <p className="text-sm text-(--sea-ink-soft)">
+            No departments are available. Create a department before adding a
+            course.
+          </p>
+        ) : (
+          departments.map((department) => (
+            <label
+              key={department.id}
+              className="flex items-center gap-2 text-sm text-(--sea-ink)"
+            >
+              <input
+                type="checkbox"
+                value={department.id}
+                aria-invalid={errors.departmentIds ? 'true' : undefined}
+                {...register('departmentIds')}
+              />
+              {department.name} ({department.code})
+            </label>
+          ))
+        )}
+        {errors.departmentIds && (
+          <p className="text-sm text-destructive" role="alert">
+            {errors.departmentIds.message}
+          </p>
+        )}
+      </fieldset>
 
       <div className="flex flex-wrap justify-end gap-3">
         <Button

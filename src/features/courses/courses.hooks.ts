@@ -1,38 +1,44 @@
 import { useCallback, useState } from 'react'
-import {
-  createDemoCourse,
-  deleteDemoCourse,
-  getDemoCourses,
-  updateDemoCourse,
-} from '@/features/courses/courses.data'
 import type { CourseFormValues } from '@/features/courses/courses.schema'
 import type { Course } from '@/features/courses/courses.types'
 
 type UseCoursesResult = {
   courses: Course[]
-  addCourse: (values: CourseFormValues) => void
   updateCourse: (courseId: string, values: CourseFormValues) => void
   removeCourse: (courseId: string) => void
 }
 
-export const useCourses = (): UseCoursesResult => {
-  const [courses, setCourses] = useState<Course[]>(getDemoCourses)
-
-  const addCourse = useCallback((values: CourseFormValues): void => {
-    createDemoCourse(values)
-    setCourses(getDemoCourses())
-  }, [])
+export const useCourses = (initialCourses: Course[]): UseCoursesResult => {
+  const [courses, setCourses] = useState<Course[]>(initialCourses)
 
   const updateCourse = useCallback(
     (courseId: string, values: CourseFormValues): void => {
-      setCourses(updateDemoCourse(courseId, values))
+      setCourses((currentCourses) => {
+        if (!currentCourses.some((course) => course.id === courseId)) {
+          throw new Error(`Course "${courseId}" does not exist.`)
+        }
+
+        return currentCourses.map((course) =>
+          course.id === courseId ? { ...course, ...values } : course,
+        )
+      })
     },
     [],
   )
 
   const removeCourse = useCallback((courseId: string): void => {
-    setCourses(deleteDemoCourse(courseId))
+    setCourses((currentCourses) => {
+      const remainingCourses = currentCourses.filter(
+        (course) => course.id !== courseId,
+      )
+
+      if (remainingCourses.length === currentCourses.length) {
+        throw new Error(`Course "${courseId}" does not exist.`)
+      }
+
+      return remainingCourses
+    })
   }, [])
 
-  return { courses, addCourse, updateCourse, removeCourse }
+  return { courses, updateCourse, removeCourse }
 }

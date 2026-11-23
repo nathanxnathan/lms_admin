@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react'
 import { CourseForm } from '@/components/forms/CourseForm'
 import type { CourseFormValues } from '@/features/courses/courses.schema'
 import type { Course } from '@/features/courses/courses.types'
+import type { Department } from '@/features/department/department.types'
 import { Button } from '@/components/ui/button'
 
 type CourseDialogProps = {
   course: Course
+  departments: Department[]
   mode: 'view' | 'edit'
   onClose: () => void
   onSave: (values: CourseFormValues) => void
@@ -13,6 +15,7 @@ type CourseDialogProps = {
 
 export const CourseDialog = ({
   course,
+  departments,
   mode,
   onClose,
   onSave,
@@ -55,8 +58,8 @@ export const CourseDialog = ({
             </h2>
             <p className="text-sm text-(--sea-ink-soft)">
               {mode === 'view'
-                ? 'Review the course name and code.'
-                : 'Update the course name or code.'}
+                ? 'Review the course details and departments.'
+                : 'Update the course details or departments.'}
             </p>
           </div>
           <Button
@@ -75,20 +78,55 @@ export const CourseDialog = ({
               <dt className="text-xs font-semibold uppercase tracking-wide text-(--sea-ink-soft)">
                 Course name
               </dt>
-              <dd className="font-medium">{course.courseName}</dd>
+              <dd className="font-medium">{course.name}</dd>
             </div>
             <div className="flex flex-col gap-1">
               <dt className="text-xs font-semibold uppercase tracking-wide text-(--sea-ink-soft)">
                 Course code
               </dt>
-              <dd className="font-medium">{course.courseCode}</dd>
+              <dd className="font-medium">{course.code}</dd>
+            </div>
+            <div className="flex flex-col gap-1 sm:col-span-2">
+              <dt className="text-xs font-semibold uppercase tracking-wide text-(--sea-ink-soft)">
+                Description
+              </dt>
+              <dd className="font-medium">{course.description ?? '—'}</dd>
+            </div>
+            <div className="flex flex-col gap-1 sm:col-span-2">
+              <dt className="text-xs font-semibold uppercase tracking-wide text-(--sea-ink-soft)">
+                Departments
+              </dt>
+              <dd className="font-medium">
+                {(
+                  course.departmentIds ??
+                  course.departments?.map((department) => department.id) ??
+                  []
+                )
+                  .map(
+                    (departmentId) =>
+                      course.departments?.find(
+                        (department) => department.id === departmentId,
+                      )?.name ??
+                      departments.find(
+                        (department) => department.id === departmentId,
+                      )?.name ??
+                      departmentId,
+                  )
+                  .join(', ') || '—'}
+              </dd>
             </div>
           </dl>
         ) : (
           <CourseForm
+            departments={departments}
             initialValues={{
-              courseName: course.courseName,
-              courseCode: course.courseCode,
+              name: course.name,
+              code: course.code,
+              description: course.description ?? '',
+              departmentIds:
+                course.departmentIds ??
+                course.departments?.map((department) => department.id) ??
+                [],
             }}
             onCancel={closeDialog}
             onSubmit={onSave}
